@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Talking Intro Generator</title>
+  <style>
+    body { font-family: sans-serif; background: #f0f4f8; padding: 2rem; }
+    .container { background: #fff; max-width: 500px; margin: auto; padding: 2rem; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); }
+    input, textarea, button { width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; }
+    video { width: 100%; margin-top: 20px; display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>AI Intro Video Generator</h2>
+    <form id="introForm">
+      <label>Upload Your Photo:</label>
+      <input type="file" id="image" accept="image/*" required />
+      <label>Enter Intro Text:</label>
+      <textarea id="text" rows="4" placeholder="Hi, I'm Alex..." required></textarea>
+      <button type="submit">Generate Video</button>
+    </form>
+    <video id="videoPlayer" controls></video>
+  </div>
+
+  <script>
+    const form = document.getElementById('introForm');
+    const videoPlayer = document.getElementById('videoPlayer');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const image = document.getElementById('image').files[0];
+      const text = document.getElementById('text').value;
+      if (!image || !text) {
+        alert('Please upload an image and enter some text.');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('image', image);
+      formData.append('text', text);
+      const response = await fetch('/generate', {
+        method: 'POST',
+        body: formData,
+      });
+      if (response.ok) {
+        const blob = await response.blob();
+        const videoUrl = URL.createObjectURL(blob);
+        videoPlayer.src = videoUrl;
+        videoPlayer.style.display = 'block';
+      } else {
+        alert('Something went wrong generating the video.');
+      }
+    });
+  </script>
+</body>
+</html>
 
